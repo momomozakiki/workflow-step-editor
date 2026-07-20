@@ -11,3 +11,8 @@ library;
 export 'core/step_result.dart';
 export 'core/step_error.dart';
 export 'registry/registry.dart';
+
+// Procedure-editor domain model.
+export 'procedure/party.dart';
+export 'procedure/procedure_step.dart';
+export 'procedure/procedure_document.dart';

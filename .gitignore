@@ -2,10 +2,11 @@
 .dart_tool/
 .packages
 build/
-# Lockfiles: both packages here are libraries, so their lockfiles stay ignored
-# (Dart convention). Add a "!path/pubspec.lock" exception only if/when a shipped
-# app package is added, to make that app's builds reproducible.
+# Lockfiles: the two library packages ignore their lockfiles (Dart convention);
+# the shipped app package commits its lockfile for reproducible builds (per the
+# note that added the exception below).
 pubspec.lock
+!packages/workflow_step_editor_app/pubspec.lock
 .flutter-plugins
 .flutter-plugins-dependencies
 

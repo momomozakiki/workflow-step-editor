@@ -63,7 +63,17 @@ flutter test
 ```
 
 `workflow_step_editor_ui` is a **library with no `flutter run` target of its own**; running the UI
-requires an example/host app (not yet created — see the ROADMAP).
+requires the host app below.
+
+App (`workflow_step_editor_app`, Flutter desktop — the runnable host):
+
+```sh
+cd packages/workflow_step_editor_app
+flutter pub get
+flutter analyze
+flutter test
+flutter run -d windows   # hot reload for fast development
+```
 
 ## Git Workflow
 
@@ -80,18 +90,26 @@ The SessionStart/Stop hooks surface branch status and prompt for commits at the 
 
 ## Architecture
 
-Two packages under `packages/` (no monorepo manager — see FOUNDATIONS):
+Three packages under `packages/` (no monorepo manager — see FOUNDATIONS):
 
-- **`workflow_step_editor_core`** — pure-Dart infrastructure. Public surface via the barrel
-  `lib/workflow_step_editor_core.dart`; code in stage folders directly under `lib/` (`core/`,
-  `registry/`) — **not** `lib/src/`.
+- **`workflow_step_editor_core`** — pure-Dart infrastructure + domain model. Public surface via the
+  barrel `lib/workflow_step_editor_core.dart`; code in stage/feature folders directly under `lib/`
+  (`core/`, `registry/`, `procedure/`) — **not** `lib/src/`.
   - `StepResult` — immutable `values` + `warnings` + `isPartial`; recoverable problems are warnings,
     not exceptions; thread state with `copyWith`.
   - `StepError` — **sealed** fatal-error hierarchy (`ConfigError`, `ProcessError`, `NotFoundError`).
   - `Registry<T>` — instance-based `type → factory` seam (Open/Closed + Dependency Inversion).
+  - `procedure/` — the procedure-editor domain: `Party`, `ProcedureStep`, `ProcedureDocument`
+    (immutable, `copyWith`, `toJson`/hardened `fromJson`). **Colors are `int` ARGB, not Flutter
+    `Color`**, so the core stays Flutter-free.
 - **`workflow_step_editor_ui`** — Flutter widget library; imports **only** the core; hides impl under
-  `lib/src/`. State via `ChangeNotifier` (`EditorController`); dependencies constructor-injected with
-  default fallbacks (injectable `clock` for deterministic tests).
+  `lib/src/`. State via `ChangeNotifier` (`EditorController`, `ProcedureEditorController`);
+  dependencies constructor-injected with default fallbacks (injectable `clock` for deterministic
+  tests). `lib/src/procedure/` holds the editor widgets (table with drag reorder, editable cells,
+  party badge + color picker, notes/footer).
+- **`workflow_step_editor_app`** — the runnable Flutter **desktop host** (Windows). Injects the
+  platform concretions the libraries omit: `lib/src/export/` (`JsonStore`, `PdfExporter`,
+  `ImageExporter`) is the only place `dart:io`, `pdf`, `printing`, and `file_selector` are used.
 
 ## Conventions
 

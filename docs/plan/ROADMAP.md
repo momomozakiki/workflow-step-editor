@@ -4,24 +4,32 @@ The canonical "where are we" tracker. The `**Next action:**` line below is auto-
 at the start of every session by `.claude/hooks/workflow_hook.py`. Keep it current — update the
 status boxes and the Next action line as each item is verified and committed.
 
-**Next action:** Define the real `WorkflowStep` domain model (sealed taxonomy + a `StepRegistry`) in
-`workflow_step_editor_core`, replacing the test-only `FakeStep` used to prove the registry pattern.
+**Next action:** Grow the procedure editor from its first runnable cut — candidate follow-ups:
+inline icon/image cells (rich text), a bundled Unicode PDF font so arbitrary typed characters export
+cleanly, undo/redo, and enabling additional platforms (`flutter create --platforms=…`).
 
 ## Status
 
-### Foundation (in progress)
+### Foundation
 - [x] Project scaffolded from `odb_library` practices — two packages, governance, docs.
 - [x] Core infrastructure: `StepResult`, `StepError` (sealed), `Registry<T>` — domain-free.
 - [x] UI: `EditorController` (`ChangeNotifier`, injectable clock), imports only the core.
 - [x] `.claude` governance ported: hook, settings, 3 agents, 4 skills.
 - [ ] Merge `feat/project-foundation` to `main` once confirmed stable.
 
+### Procedure editor (v1 — first runnable app)
+The concrete domain landed as a **procedure table** editor (ported from the `Interactive Procedure`
+HTML tool), not the abstract sealed `WorkflowStep` taxonomy originally sketched — the taxonomy remains
+available in the core infra (`StepResult`/`StepError`/`Registry`) if a future feature needs it.
+- [x] **Domain model** (core `lib/procedure/`) — `Party`, `ProcedureStep`, `ProcedureDocument` with
+  `copyWith`, `toJson`, and hardened `fromJson`.
+- [x] **Editor UI** (ui `lib/src/procedure/`) — `ProcedureEditorController` + widgets: table with
+  drag-and-drop reorder, editable cells, party badge + in-house color picker/palette, editable
+  notes/footer.
+- [x] **Host app** — `workflow_step_editor_app` (Windows desktop), the first `flutter run` target.
+  Import/export JSON, export PDF (portrait/landscape), export PNG.
+
 ### Next
-- [ ] **Domain model** — define the real `WorkflowStep` sealed taxonomy and its `StepRegistry` in the
-  core. Delete the test-only `test/support/fake_step.dart` stand-in once real variants exist. This is
-  the first feature task; the infra it builds on is already proven.
-- [ ] **Editor UI** — build the actual step-editing widgets on top of `EditorController`.
-- [ ] **Example / host app** — a Flutter package that *runs* the UI. `workflow_step_editor_ui` is a
-  library with **no `flutter run` target of its own**; running it requires an example or host app.
-  When one is added, adopt a versioned + checksummed packaging script (the `odb_library`
+- [ ] Rich-text cells (inline icons/images), bundled Unicode PDF font, undo/redo, more platforms.
+- [ ] When packaging a release, adopt a versioned + checksummed script (the `odb_library`
   `scripts/package-installers.ps1` template) and stage artifacts only in `dist/`.

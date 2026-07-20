@@ -1,0 +1,35 @@
+name: workflow_step_editor_app
+description: >-
+  Runnable desktop host for the workflow step editor. Wires the pure-Dart core
+  and the Flutter UI library together and injects the platform concretions
+  (file I/O, PDF/print, image capture) the libraries deliberately leave out.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # The layered libraries. The app depends on both; the UI itself imports only
+  # the core (see the `wse-package-boundaries` skill).
+  workflow_step_editor_ui:
+    path: ../workflow_step_editor_ui
+  workflow_step_editor_core:
+    path: ../workflow_step_editor_core
+
+  # Platform concretions live only here, never in the libraries:
+  pdf: ^3.11.0          # in-memory PDF document generation
+  printing: ^5.13.0     # print / save-as-PDF dialog (platform channels)
+  file_selector: ^1.0.3 # native open/save file dialogs
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
