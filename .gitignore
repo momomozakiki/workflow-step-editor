@@ -1,0 +1,31 @@
+# Dart / Flutter
+.dart_tool/
+.packages
+build/
+# Lockfiles: both packages here are libraries, so their lockfiles stay ignored
+# (Dart convention). Add a "!path/pubspec.lock" exception only if/when a shipped
+# app package is added, to make that app's builds reproducible.
+pubspec.lock
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Release staging — keep the folder + its README, ignore all binaries & secrets
+/dist/*
+!/dist/README.md
+
+# Android release-signing secrets — never committed, per-machine/per-developer
+key.properties
+*.jks
+*.keystore
+
+# Workflow-hook mid-task breadcrumb — machine-written, session-local, never committed
+plans/UNFINISHED.md

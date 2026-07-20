@@ -1,0 +1,10 @@
+# Flutter packages can't use `package:lints`, so include flutter_lints and
+# re-add the repo's three baseline rules (lint parity — see the root
+# analysis_options.yaml and the `dart-solid-principles` skill).
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    - prefer_final_locals
+    - prefer_const_constructors
+    - avoid_print

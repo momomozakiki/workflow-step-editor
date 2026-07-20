@@ -1,0 +1,7 @@
+{
+  "roadmap_file": "docs/plan/ROADMAP.md",
+  "retrospective_file": "docs/claude-code-agentic/RETROSPECTIVE.md",
+  "source_marker": "/lib/",
+  "docs_marker": "docs/",
+  "flutter_bin_dir": null
+}

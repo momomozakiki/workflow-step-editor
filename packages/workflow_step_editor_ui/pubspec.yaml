@@ -1,0 +1,26 @@
+name: workflow_step_editor_ui
+description: >-
+  Flutter widget library for the workflow step editor. Imports only the pure-Dart
+  core (never a concrete implementation); host apps inject concretions. State is
+  ChangeNotifier-based; dependencies are constructor-injected.
+version: 0.1.0
+publish_to: 'none'
+
+environment:
+  # Floor >= the core's floor (>=3.2.0), same major ceiling. See the
+  # `wse-package-boundaries` skill: core SDK floor <= UI SDK floor.
+  sdk: ^3.12.0
+  flutter: '>=3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  workflow_step_editor_core:
+    path: ../workflow_step_editor_core
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
