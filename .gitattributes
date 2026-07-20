@@ -1,0 +1,3 @@
+# Normalize line endings: store as LF in the repo, check out as LF everywhere.
+# Stops Windows (Flutter-generated) files from showing LF<->CRLF churn in diffs.
+* text=auto eol=lf
