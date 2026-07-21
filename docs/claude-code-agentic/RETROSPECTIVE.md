@@ -6,6 +6,37 @@ compounds (Gate 9 of `wse-orchestration`). Newest entries at the top.
 
 ---
 
+## 2026-07-21 — Step icons switched to flat-colour Twemoji PNGs
+
+- **What was done:** Replaced the monochrome Material step glyphs with flat multi-colour **Twemoji**
+  icons (closer to the reference infographic). The catalog now maps the same stable `String` key to a
+  bundled `assets/icons/twemoji/<key>.png`; a single `stepIcon()` seam renders `Image.asset` for both
+  the table slot and the picker, and the PDF exporter embeds the same PNG via `rootBundle` →
+  `pw.MemoryImage`. Core stayed untouched (the key is still an opaque string).
+- **What worked:** the earlier design paid off — because the core already stored an opaque key and the
+  UI owned a single catalog seam, the whole restyle was UI/app-only with **zero core changes**. Driving
+  the icon-source decision with a **published comparison Artifact** (real icon files fetched live and
+  inlined — Material/Lucide/Phosphor/Twemoji/OpenMoji/Fluent 3D) let the user pick from actual samples
+  instead of prose.
+- **Adaptation to note (worth a skill hint):** rendering SVG icons **in the PDF is a trap**. Two paths
+  were tried and both hung export: the `pdf` package's own `pw.SvgImage` (very slow on multi-path
+  colour glyphs) and `flutter_svg`'s `vg.loadPicture` + offscreen `Picture.toImage` (does not complete
+  under the non-widget test binding). The fix was to **ship pre-rendered PNG assets** and load bytes —
+  no runtime rasterization at all. A future "colour icons in PDF" task should bundle raster assets
+  rather than rasterize SVG at export time.
+- **Testing gotcha:** the `PdfExporter.build` tests were plain `test()` and only "passed" originally
+  because `rootBundle` failed silently (icons skipped). Once real asset loading worked they had to
+  become `testWidgets` (binding required); a dedicated happy-path test now asserts the icon PNG
+  actually loads so a silent-skip regression can't hide again.
+- **Licensing note:** picked Twemoji (MIT) over extracting icons from the user's raster infographic
+  (low quality + almost certainly Flaticon-licensed art). Worth a reusable stance: never rip icons out
+  of a supplied bitmap; match the style with a permissively-licensed set instead.
+- **Right-sizing:** implemented inline across ui/app; verification was the existing analyze + test gate
+  (core 44 / ui 24 / app 5, all green). A concurrent session had shipped the v1 icon feature under me
+  mid-task — surfaced it and paused rather than fighting the working tree, which avoided a clobber.
+
+---
+
 ## 2026-07-21 — Per-step icons (editor + PNG + PDF)
 
 - **What was done:** Added a chosen icon per `ProcedureStep`, mirroring the reference infographic.
