@@ -16,7 +16,9 @@ font so arbitrary typed characters export cleanly, undo/redo, and enabling addit
 - [x] Core infrastructure: `StepResult`, `StepError` (sealed), `Registry<T>` — domain-free.
 - [x] UI: `EditorController` (`ChangeNotifier`, injectable clock), imports only the core.
 - [x] `.claude` governance ported: hook, settings, 3 agents, 4 skills.
-- [ ] Merge `feat/project-foundation` to `main` once confirmed stable.
+- [x] Merge to `main` (2026-07-22) — `main` created from the `feat/procedure-editor` tip (linear
+  history containing the foundation + procedure editor v1), verified green across all three packages,
+  and set as the GitHub default branch.
 
 ### Procedure editor (v1 — first runnable app)
 The concrete domain landed as a **procedure table** editor (ported from the `Interactive Procedure`
