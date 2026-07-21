@@ -6,6 +6,30 @@ compounds (Gate 9 of `wse-orchestration`). Newest entries at the top.
 
 ---
 
+## 2026-07-21 — Fixed step-cell focus loss while typing (unstable row key)
+
+- **What was done:** Editable step cells dropped focus after every character. Root cause was the
+  `ReorderableListView` row key `ValueKey('step-$i-${identityHashCode(steps[i])}')`: `copyWith` mints
+  a new `ProcedureStep` per keystroke → new identity hash → new key → row remount → the cell's
+  `TextEditingController`/focus node disposed. Fixed by keying rows on **position** (`ValueKey('step-$i')`).
+  Added widget tests for per-keystroke focus retention and reorder-content correctness.
+- **What worked:** Red-then-green discipline paid off — writing the focus test first proved it failed
+  against the old key before the one-line fix, so the test genuinely guards the regression rather than
+  just documenting current behaviour.
+- **Adaptation to note:** the `wse-orchestration` triage correctly stayed **Route A** (one-file UI fix);
+  no cold subagents spawned. A user code-review pass pushed back on index keys breaking
+  `ReorderableListView` drag — worth recording the counter-argument: the list doesn't rebuild its
+  `itemBuilder` with reordered data *mid-drag* (the backing list mutates only at drop via `moveStep`),
+  so index keys stay stable during a gesture; the usual index-key caveat ("state follows position") is
+  moot because `EditableCell` re-derives its text from `value` in `didUpdateWidget`. A stable model `id`
+  was rejected because `ProcedureStep` is a value-equality type whose identity is deliberately its
+  position — an `id` would break `==` and leak a UI concern into the pure core.
+- **Skill gap:** none new. A one-line note in `dart-solid-principles` (or a future Flutter-UI skill)
+  that "list-item widget keys must be derived from stable per-item identity, never from a value that
+  `copyWith` regenerates" would have surfaced this class of bug up front — candidate if it recurs.
+
+---
+
 ## 2026-07-21 — Step icons switched to flat-colour Twemoji PNGs
 
 - **What was done:** Replaced the monochrome Material step glyphs with flat multi-colour **Twemoji**
