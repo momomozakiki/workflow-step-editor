@@ -77,4 +77,74 @@ void main() {
 
     expect(controller.document.steps.first.icon, 'handshake');
   });
+
+  testWidgets('typing a multi-character string keeps focus (no per-keystroke unfocus)',
+      (tester) async {
+    final controller = ProcedureEditorController(
+      initial: const ProcedureDocument(
+        title: 'T',
+        subtitle: 'S',
+        parties: [Party.buyer],
+        notes: '',
+        footer: '',
+        steps: [
+          ProcedureStep(title: '', action: 'a', documents: 'd', party: Party.buyer),
+          ProcedureStep(title: 'other', action: 'a', documents: 'd', party: Party.buyer),
+        ],
+      ),
+    );
+    await tester.pumpWidget(host(controller));
+
+    // The first TextField in the table is the first step's title cell (rows are
+    // title/action/documents in order; the host pumps only the table). Index by
+    // position so the finder stays valid as the field's text changes.
+    final titleField = find.byType(TextField).first;
+    await tester.tap(titleField);
+    await tester.pump();
+
+    const typed = 'Hello';
+    for (final ch in typed.split('')) {
+      final current = controller.document.steps.first.title;
+      await tester.enterText(titleField, '$current$ch');
+      await tester.pump();
+      // The field backing the first step's title must remain the primary focus
+      // after every keystroke; if the row remounts, focus is lost here.
+      final editable = tester.state<EditableTextState>(
+        find.descendant(
+          of: find.byType(TextField).first,
+          matching: find.byType(EditableText),
+        ),
+      );
+      expect(editable.widget.focusNode.hasPrimaryFocus, isTrue,
+          reason: 'field lost focus after typing "$ch"');
+    }
+
+    expect(controller.document.steps.first.title, typed);
+  });
+
+  testWidgets('reorder moves rows with their content', (tester) async {
+    final controller = ProcedureEditorController(
+      initial: const ProcedureDocument(
+        title: 'T',
+        subtitle: 'S',
+        parties: [Party.buyer],
+        notes: '',
+        footer: '',
+        steps: [
+          ProcedureStep(title: 'First', action: 'a', documents: 'd', party: Party.buyer),
+          ProcedureStep(title: 'Second', action: 'a', documents: 'd', party: Party.buyer),
+        ],
+      ),
+    );
+    await tester.pumpWidget(host(controller));
+
+    controller.moveStep(0, 1);
+    await tester.pump();
+
+    expect(controller.document.steps.map((s) => s.title).toList(),
+        ['Second', 'First']);
+    // Both titles still render after the reorder-driven rebuild.
+    expect(find.text('First'), findsOneWidget);
+    expect(find.text('Second'), findsOneWidget);
+  });
 }

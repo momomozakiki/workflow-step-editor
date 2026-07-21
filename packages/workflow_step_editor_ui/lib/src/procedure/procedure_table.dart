@@ -32,7 +32,13 @@ class ProcedureTable extends StatelessWidget {
               itemCount: steps.length,
               onReorderItem: controller.moveStep,
               itemBuilder: (context, i) => _StepRow(
-                key: ValueKey('step-$i-${identityHashCode(steps[i])}'),
+                // Key by position, not by step identity: `copyWith` mints a new
+                // ProcedureStep on every keystroke, so an identity-based key would
+                // change each character, remounting the row and dropping the cell's
+                // focus. Position is stable while typing (keeping focus) and unique
+                // per row (satisfying ReorderableListView); the row is stateless and
+                // re-reads steps[index], so reordered content still renders correctly.
+                key: ValueKey('step-$i'),
                 controller: controller,
                 index: i,
               ),
