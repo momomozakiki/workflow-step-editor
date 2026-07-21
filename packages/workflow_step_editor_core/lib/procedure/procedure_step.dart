@@ -1,5 +1,5 @@
 /// One row of a procedure: a [title], a [action] description, a [documents]
-/// list, and the responsible [party].
+/// list, the responsible [party], and an optional [icon].
 ///
 /// Pure-Dart and immutable. The step *number* is intentionally **not** stored —
 /// it is derived from the row's position in [ProcedureDocument.steps], so adding,
@@ -16,6 +16,7 @@ final class ProcedureStep {
     required this.action,
     required this.documents,
     required this.party,
+    this.icon = '',
   });
 
   final String title;
@@ -23,17 +24,25 @@ final class ProcedureStep {
   final String documents;
   final Party party;
 
+  /// Identifier for the step's display icon (e.g. `'handshake'`), resolved to a
+  /// concrete glyph by the UI's icon catalog. Empty means "no icon". Stored as a
+  /// plain [String] — never a Flutter type — so the core stays Flutter-free (the
+  /// same reason [Party] stores colors as ARGB ints).
+  final String icon;
+
   ProcedureStep copyWith({
     String? title,
     String? action,
     String? documents,
     Party? party,
+    String? icon,
   }) =>
       ProcedureStep(
         title: title ?? this.title,
         action: action ?? this.action,
         documents: documents ?? this.documents,
         party: party ?? this.party,
+        icon: icon ?? this.icon,
       );
 
   Map<String, Object?> toJson() => {
@@ -41,6 +50,7 @@ final class ProcedureStep {
         'action': action,
         'documents': documents,
         'party': party.toJson(),
+        'icon': icon,
       };
 
   /// Build a [ProcedureStep] from untrusted decoded JSON, defaulting every
@@ -52,6 +62,7 @@ final class ProcedureStep {
       action: JsonReader.asString(map['action']),
       documents: JsonReader.asString(map['documents']),
       party: Party.fromJson(map['party']),
+      icon: JsonReader.asString(map['icon']),
     );
   }
 
@@ -61,10 +72,11 @@ final class ProcedureStep {
       other.title == title &&
       other.action == action &&
       other.documents == documents &&
-      other.party == party;
+      other.party == party &&
+      other.icon == icon;
 
   @override
-  int get hashCode => Object.hash(title, action, documents, party);
+  int get hashCode => Object.hash(title, action, documents, party, icon);
 
   @override
   String toString() => 'ProcedureStep($title, party: ${party.name})';

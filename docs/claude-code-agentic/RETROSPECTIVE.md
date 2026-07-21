@@ -6,6 +6,28 @@ compounds (Gate 9 of `wse-orchestration`). Newest entries at the top.
 
 ---
 
+## 2026-07-21 — Per-step icons (editor + PNG + PDF)
+
+- **What was done:** Added a chosen icon per `ProcedureStep`, mirroring the reference infographic.
+  Core stores an opaque `String icon` key (Flutter-free, same spirit as `Party`'s ARGB ints); the UI
+  owns the single-source-of-truth catalog (`step_icon_catalog.dart`, ~27 `const Icons.*` entries) and
+  a search-filtered `showStepIconPicker`; the row shows a tap-to-pick slot left of the title cell.
+- **What worked:** Reusing the `Party`/`PartyBadge`/`showPartyEditor` pattern made placement obvious —
+  a primitive-typed core field + a UI catalog + a picker dialog + a `controller.updateIcon`, no new
+  architecture. `const` catalog entries sidestep Flutter's release icon-tree-shaker with no build flag.
+- **Adaptation to note (worth a skill hint):** the plan said "bundle `MaterialIcons-Regular.ttf`" for
+  the PDF, but the only Material-icons font Flutter ships offline is **CFF/`OTTO`**, which the `pdf`
+  package's TrueType parser rejects. Pivoted to rasterizing each glyph to a PNG via Flutter's own
+  renderer (`icon_raster.dart`) and embedding `pw.Image` — fully offline, full fidelity. A future
+  "icons in PDF" task should reach for glyph-rasterization first rather than font embedding.
+- **Small gotcha:** `IconData` is exported from `package:flutter/widgets.dart`, not `painting.dart`;
+  the first `icon_raster.dart` cut used `painting.dart` and failed to compile (caught by app analyze).
+- **Right-sizing:** implemented inline across core/ui/app (the plan-mode Explore+Plan agents were used
+  for design only); no review subagents spawned unprompted — verification was the existing
+  analyze + test gate (core 44 / ui 24 / app 4, all green).
+
+---
+
 ## 2026-07-20 — Procedure editor v1 (first runnable desktop app)
 
 - **What was done:** Recreated the `Interactive Procedure` HTML tool as a Flutter app across all three

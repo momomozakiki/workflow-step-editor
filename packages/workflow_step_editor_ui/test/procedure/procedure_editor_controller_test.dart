@@ -65,6 +65,13 @@ void main() {
       expect(controller.document.steps.first.party, Party.seller);
     });
 
+    test('updateIcon sets the icon for a row', () {
+      controller.updateIcon(0, 'handshake');
+      expect(controller.document.steps.first.icon, 'handshake');
+      controller.updateIcon(0, ''); // clearing is allowed
+      expect(controller.document.steps.first.icon, '');
+    });
+
     test('moveStep reorders using onReorderItem (post-removal) semantics', () {
       final first = controller.document.steps[0].title;
       final second = controller.document.steps[1].title;

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'editable_cell.dart';
 import 'party_badge.dart';
 import 'procedure_editor_controller.dart';
+import 'step_icon_catalog.dart';
+import 'step_icon_picker.dart';
 
 const Color _navy = Color(0xFF0A2F5E);
 
@@ -94,12 +96,21 @@ class _StepRow extends StatelessWidget {
           SizedBox(width: 44, child: _StepNumber(index + 1)),
           Expanded(
             flex: 2,
-            child: EditableCell(
-              value: step.title,
-              bold: true,
-              hintText: 'Procedure name…',
-              maxLines: null,
-              onChanged: (v) => controller.updateTitle(index, v),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _StepIconButton(controller: controller, index: index),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: EditableCell(
+                    value: step.title,
+                    bold: true,
+                    hintText: 'Procedure name…',
+                    maxLines: null,
+                    onChanged: (v) => controller.updateTitle(index, v),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(width: 8),
@@ -152,6 +163,58 @@ class _StepRow extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// The tappable step-icon slot shown to the left of the title cell. Shows the
+/// chosen glyph, or a muted "add icon" placeholder when none is set. Tapping
+/// opens [showStepIconPicker] and writes the result back through [controller].
+class _StepIconButton extends StatelessWidget {
+  const _StepIconButton({required this.controller, required this.index});
+
+  final ProcedureEditorController controller;
+  final int index;
+
+  Future<void> _pick(BuildContext context) async {
+    final current = controller.document.steps[index].icon;
+    final result = await showStepIconPicker(context, initial: current);
+    if (result == null) return; // cancelled
+    controller.updateIcon(index, result);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final key = controller.document.steps[index].icon;
+    final icon = iconFor(key);
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(6),
+        onTap: () => _pick(context),
+        child: Tooltip(
+          message: icon == null ? 'Add icon' : 'Change icon',
+          child: Container(
+            width: 30,
+            height: 30,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: icon == null ? null : const Color(0xFFEEF3FA),
+              borderRadius: BorderRadius.circular(6),
+              border: Border.all(
+                color: icon == null
+                    ? const Color(0x33000000)
+                    : const Color(0x14000000),
+              ),
+            ),
+            child: Icon(
+              icon ?? Icons.add_photo_alternate_outlined,
+              size: 20,
+              color: icon == null ? const Color(0xFF9BB0CC) : _navy,
+            ),
+          ),
+        ),
       ),
     );
   }

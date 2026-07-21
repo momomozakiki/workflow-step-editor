@@ -13,3 +13,5 @@ export 'src/procedure/procedure_table.dart';
 export 'src/procedure/party_badge.dart';
 export 'src/procedure/party_editor.dart';
 export 'src/procedure/document_notes.dart';
+export 'src/procedure/step_icon_catalog.dart';
+export 'src/procedure/step_icon_picker.dart';

@@ -4,6 +4,9 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:workflow_step_editor_core/workflow_step_editor_core.dart';
+import 'package:workflow_step_editor_ui/workflow_step_editor_ui.dart';
+
+import 'icon_raster.dart';
 
 /// Page orientation for [PdfExporter]; chosen by the user before export.
 enum PdfOrientation { portrait, landscape }
@@ -33,6 +36,7 @@ class PdfExporter {
     final format = orientation == PdfOrientation.landscape
         ? PdfPageFormat.a4.landscape
         : PdfPageFormat.a4;
+    final icons = await _iconImages(doc);
     final pdf = pw.Document();
     pdf.addPage(
       pw.MultiPage(
@@ -45,7 +49,7 @@ class PdfExporter {
         build: (context) => [
           _headerBlock(doc),
           pw.SizedBox(height: 14),
-          _table(doc),
+          _table(doc, icons),
           if (doc.notes.trim().isNotEmpty) ...[
             pw.SizedBox(height: 14),
             _notesBlock(doc),
@@ -58,6 +62,23 @@ class PdfExporter {
       ),
     );
     return pdf.save();
+  }
+
+  /// Rasterize every distinct step icon used in [doc] to a PDF image, keyed by
+  /// the step's icon key. Unknown/empty keys are skipped. See [rasterizeIcon]
+  /// for why icons are embedded as images rather than a font.
+  Future<Map<String, pw.MemoryImage>> _iconImages(ProcedureDocument doc) async {
+    final keys = {
+      for (final s in doc.steps)
+        if (s.icon.isNotEmpty) s.icon,
+    };
+    final images = <String, pw.MemoryImage>{};
+    for (final key in keys) {
+      final icon = iconFor(key);
+      if (icon == null) continue;
+      images[key] = pw.MemoryImage(await rasterizeIcon(icon));
+    }
+    return images;
   }
 
   String _fileName(ProcedureDocument doc) {
@@ -90,7 +111,7 @@ class PdfExporter {
     );
   }
 
-  pw.Widget _table(ProcedureDocument doc) {
+  pw.Widget _table(ProcedureDocument doc, Map<String, pw.MemoryImage> icons) {
     return pw.Table(
       border: pw.TableBorder.all(color: const PdfColor.fromInt(0xFFDDE4ED)),
       columnWidths: const {
@@ -102,7 +123,8 @@ class PdfExporter {
       },
       children: [
         _headerRow(),
-        for (var i = 0; i < doc.steps.length; i++) _dataRow(i + 1, doc.steps[i]),
+        for (var i = 0; i < doc.steps.length; i++)
+          _dataRow(i + 1, doc.steps[i], icons[doc.steps[i].icon]),
       ],
     );
   }
@@ -131,7 +153,7 @@ class PdfExporter {
     );
   }
 
-  pw.TableRow _dataRow(int number, ProcedureStep step) {
+  pw.TableRow _dataRow(int number, ProcedureStep step, pw.MemoryImage? icon) {
     pw.Widget text(String value, {bool bold = false}) => pw.Padding(
           padding: const pw.EdgeInsets.all(6),
           child: pw.Text(
@@ -142,6 +164,24 @@ class PdfExporter {
             ),
           ),
         );
+    // Title cell: the step icon (if any) sits left of the bold title text.
+    final title = pw.Text(
+      step.title,
+      style: const pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
+    );
+    final titleCell = pw.Padding(
+      padding: const pw.EdgeInsets.all(6),
+      child: icon == null
+          ? title
+          : pw.Row(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Image(icon, width: 12, height: 12),
+                pw.SizedBox(width: 4),
+                pw.Expanded(child: title),
+              ],
+            ),
+    );
     return pw.TableRow(
       children: [
         pw.Padding(
@@ -150,7 +190,7 @@ class PdfExporter {
               style:
                   const pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold)),
         ),
-        text(step.title, bold: true),
+        titleCell,
         text(step.action),
         text(step.documents),
         pw.Padding(

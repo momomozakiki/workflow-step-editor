@@ -98,6 +98,7 @@ final class ProcedureDocument {
                 "Seller's working procedure.",
             documents: 'ICPO, CPA, Vessel Q88',
             party: Party.buyer,
+            icon: 'assignment',
           ),
           ProcedureStep(
             title: 'CI & DRAFT SPA',
@@ -106,6 +107,7 @@ final class ProcedureDocument {
                 'Purchase Agreement (SPA).',
             documents: 'Commercial Invoice (CI), Draft SPA',
             party: Party.seller,
+            icon: 'handshake',
           ),
           ProcedureStep(
             title: 'SIGN & RETURN',
@@ -114,6 +116,7 @@ final class ProcedureDocument {
                 'Seller.',
             documents: 'Signed CI, Signed SPA',
             party: Party.buyer,
+            icon: 'verified',
           ),
           ProcedureStep(
             title: 'MT799 RWA',
@@ -122,6 +125,7 @@ final class ProcedureDocument {
                 "Seller's nominated bank as Proof of Funds.",
             documents: 'SWIFT MT799 RWA',
             party: Party.buyer,
+            icon: 'account_balance',
           ),
           ProcedureStep(
             title: 'RELEASE OF POP',
@@ -131,6 +135,7 @@ final class ProcedureDocument {
                 'days.',
             documents: 'TSR, SGS Report, ATV, UDTA, COO, ATSC',
             party: Party.seller,
+            icon: 'folder',
           ),
           ProcedureStep(
             title: 'SGS DIP TEST',
@@ -140,6 +145,7 @@ final class ProcedureDocument {
                 'banking days after POP verification.',
             documents: 'SGS Dip Test Report',
             party: Party.buyer,
+            icon: 'science',
           ),
           ProcedureStep(
             title: 'COMMENCEMENT OF LOADING',
@@ -149,6 +155,7 @@ final class ProcedureDocument {
                 'nominated vessel.',
             documents: 'Loading Plan, Injection Report',
             party: Party.terminalOperator,
+            icon: 'local_shipping',
           ),
           ProcedureStep(
             title: 'PAYMENT (MT103)',
@@ -157,6 +164,7 @@ final class ProcedureDocument {
                 'banking hours after completion of loading and issuance of B/L.',
             documents: 'Bill of Lading (B/L), SWIFT MT103',
             party: Party.buyer,
+            icon: 'payments',
           ),
           ProcedureStep(
             title: 'TITLE TRANSFER & DOCS',
@@ -166,6 +174,7 @@ final class ProcedureDocument {
                 'documents to Buyer.',
             documents: 'Original Shipping Documents, Commercial Documents',
             party: Party.seller,
+            icon: 'description',
           ),
           ProcedureStep(
             title: 'COMMISSION PAYMENT',
@@ -174,6 +183,7 @@ final class ProcedureDocument {
                 'accordance with the executed NCDNA/IMFPA.',
             documents: 'NCDNA / IMFPA',
             party: Party.seller,
+            icon: 'paid',
           ),
           ProcedureStep(
             title: 'LONG-TERM CONTRACT',
@@ -183,6 +193,7 @@ final class ProcedureDocument {
                 'by MT103 per shipment.',
             documents: 'Operative SBLC MT760, SWIFT MT103',
             party: Party.both,
+            icon: 'calendar_month',
           ),
         ],
         notes:

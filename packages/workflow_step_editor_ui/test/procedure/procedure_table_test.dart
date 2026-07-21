@@ -47,4 +47,34 @@ void main() {
     await tester.pump();
     expect(controller.document.steps, hasLength(10));
   });
+
+  testWidgets('tapping the icon slot opens the picker and applies a choice',
+      (tester) async {
+    final controller = ProcedureEditorController(
+      initial: const ProcedureDocument(
+        title: 'T',
+        subtitle: 'S',
+        parties: [Party.buyer],
+        notes: '',
+        footer: '',
+        steps: [
+          ProcedureStep(title: 'ICPO', action: 'a', documents: 'd', party: Party.buyer),
+        ],
+      ),
+    );
+    await tester.pumpWidget(host(controller));
+
+    // Empty icon → the "add icon" placeholder is shown.
+    expect(controller.document.steps.first.icon, '');
+    await tester.tap(find.byIcon(Icons.add_photo_alternate_outlined));
+    await tester.pumpAndSettle();
+
+    // Pick the handshake tile in the dialog, then apply.
+    await tester.tap(find.byIcon(Icons.handshake));
+    await tester.pump();
+    await tester.tap(find.text('Apply'));
+    await tester.pumpAndSettle();
+
+    expect(controller.document.steps.first.icon, 'handshake');
+  });
 }

@@ -79,6 +79,9 @@ class ProcedureEditorController extends ChangeNotifier {
   void updateParty(int index, Party party) =>
       _replaceStep(index, (s) => s.copyWith(party: party));
 
+  void updateIcon(int index, String icon) =>
+      _replaceStep(index, (s) => s.copyWith(icon: icon));
+
   void _replaceStep(int index, ProcedureStep Function(ProcedureStep) change) {
     if (index < 0 || index >= _steps.length) return;
     final next = [..._steps];
