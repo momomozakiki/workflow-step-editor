@@ -69,8 +69,8 @@ void main() {
     await tester.tap(find.byIcon(Icons.add_photo_alternate_outlined));
     await tester.pumpAndSettle();
 
-    // Pick the handshake tile in the dialog, then apply.
-    await tester.tap(find.byIcon(Icons.handshake));
+    // Pick the handshake tile (labelled "Agreement") in the dialog, then apply.
+    await tester.tap(find.text('Agreement'));
     await tester.pump();
     await tester.tap(find.text('Apply'));
     await tester.pumpAndSettle();

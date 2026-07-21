@@ -186,7 +186,8 @@ class _IconTile extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(option.icon, size: 26, color: _navy),
+              stepIcon(option.key, size: 28) ??
+                  const SizedBox(width: 28, height: 28),
               const SizedBox(height: 4),
               Text(
                 option.label,

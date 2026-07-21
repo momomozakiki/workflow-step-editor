@@ -187,32 +187,34 @@ class _StepIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final key = controller.document.steps[index].icon;
-    final icon = iconFor(key);
+    final glyph = stepIcon(key, size: 20);
+    final hasIcon = glyph != null;
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: InkWell(
         borderRadius: BorderRadius.circular(6),
         onTap: () => _pick(context),
         child: Tooltip(
-          message: icon == null ? 'Add icon' : 'Change icon',
+          message: hasIcon ? 'Change icon' : 'Add icon',
           child: Container(
             width: 30,
             height: 30,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: icon == null ? null : const Color(0xFFEEF3FA),
+              color: hasIcon ? const Color(0xFFEEF3FA) : null,
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
-                color: icon == null
-                    ? const Color(0x33000000)
-                    : const Color(0x14000000),
+                color: hasIcon
+                    ? const Color(0x14000000)
+                    : const Color(0x33000000),
               ),
             ),
-            child: Icon(
-              icon ?? Icons.add_photo_alternate_outlined,
-              size: 20,
-              color: icon == null ? const Color(0xFF9BB0CC) : _navy,
-            ),
+            child: glyph ??
+                const Icon(
+                  Icons.add_photo_alternate_outlined,
+                  size: 20,
+                  color: Color(0xFF9BB0CC),
+                ),
           ),
         ),
       ),

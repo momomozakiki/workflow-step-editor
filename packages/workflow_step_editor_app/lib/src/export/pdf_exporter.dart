@@ -1,12 +1,11 @@
 import 'dart:typed_data';
 
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:workflow_step_editor_core/workflow_step_editor_core.dart';
 import 'package:workflow_step_editor_ui/workflow_step_editor_ui.dart';
-
-import 'icon_raster.dart';
 
 /// Page orientation for [PdfExporter]; chosen by the user before export.
 enum PdfOrientation { portrait, landscape }
@@ -64,9 +63,12 @@ class PdfExporter {
     return pdf.save();
   }
 
-  /// Rasterize every distinct step icon used in [doc] to a PDF image, keyed by
-  /// the step's icon key. Unknown/empty keys are skipped. See [rasterizeIcon]
-  /// for why icons are embedded as images rather than a font.
+  /// Load the bundled PNG for every distinct step icon used in [doc], keyed by
+  /// the step's icon key, so the PDF can embed each as a [pw.MemoryImage]. The
+  /// icons are pre-rendered flat-colour Twemoji PNGs (the same assets the editor
+  /// shows), so no runtime SVG rasterization is needed. Empty/unknown keys — and
+  /// any asset that fails to load — are skipped so a bad icon degrades to "no
+  /// icon" rather than failing the whole export.
   Future<Map<String, pw.MemoryImage>> _iconImages(ProcedureDocument doc) async {
     final keys = {
       for (final s in doc.steps)
@@ -74,9 +76,17 @@ class PdfExporter {
     };
     final images = <String, pw.MemoryImage>{};
     for (final key in keys) {
-      final icon = iconFor(key);
-      if (icon == null) continue;
-      images[key] = pw.MemoryImage(await rasterizeIcon(icon));
+      final asset = iconAssetFor(key);
+      if (asset == null) continue;
+      try {
+        final data =
+            await rootBundle.load('packages/$iconAssetPackage/$asset');
+        images[key] = pw.MemoryImage(
+          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes),
+        );
+      } catch (_) {
+        // Missing/unloadable icon → fall back to no icon.
+      }
     }
     return images;
   }
