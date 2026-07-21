@@ -122,6 +122,7 @@ class PdfExporter {
   }
 
   pw.Widget _table(ProcedureDocument doc, Map<String, pw.MemoryImage> icons) {
+    final iconPt = _iconPt(doc.iconSize);
     return pw.Table(
       border: pw.TableBorder.all(color: const PdfColor.fromInt(0xFFDDE4ED)),
       columnWidths: const {
@@ -134,9 +135,22 @@ class PdfExporter {
       children: [
         _headerRow(),
         for (var i = 0; i < doc.steps.length; i++)
-          _dataRow(i + 1, doc.steps[i], icons[doc.steps[i].icon]),
+          _dataRow(i + 1, doc.steps[i], icons[doc.steps[i].icon], iconPt),
       ],
     );
+  }
+
+  /// Point size of the embedded step icon for a document icon-size key.
+  double _iconPt(String size) {
+    switch (size) {
+      case 'small':
+        return 12;
+      case 'large':
+        return 26;
+      case 'medium':
+      default:
+        return 18;
+    }
   }
 
   pw.TableRow _headerRow() {
@@ -163,7 +177,12 @@ class PdfExporter {
     );
   }
 
-  pw.TableRow _dataRow(int number, ProcedureStep step, pw.MemoryImage? icon) {
+  pw.TableRow _dataRow(
+    int number,
+    ProcedureStep step,
+    pw.MemoryImage? icon,
+    double iconPt,
+  ) {
     pw.Widget text(String value, {bool bold = false}) => pw.Padding(
           padding: const pw.EdgeInsets.all(6),
           child: pw.Text(
@@ -186,7 +205,7 @@ class PdfExporter {
           : pw.Row(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Image(icon, width: 12, height: 12),
+                pw.Image(icon, width: iconPt, height: iconPt),
                 pw.SizedBox(width: 4),
                 pw.Expanded(child: title),
               ],

@@ -75,3 +75,17 @@ Widget? stepIcon(String key, {double size = 24}) {
     fit: BoxFit.contain,
   );
 }
+
+/// Pixel size for a document icon-size key (`ProcedureDocument.iconSizes`).
+/// Unknown values fall back to the medium size.
+double iconSizePx(String size) {
+  switch (size) {
+    case 'small':
+      return 24;
+    case 'large':
+      return 52;
+    case 'medium':
+    default:
+      return 36;
+  }
+}

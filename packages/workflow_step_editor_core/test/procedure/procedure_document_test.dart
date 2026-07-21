@@ -31,6 +31,22 @@ void main() {
       expect(restored.footer, doc.footer);
     });
 
+    test('iconSize defaults to medium and round-trips through JSON', () {
+      final doc = ProcedureDocument.defaultTemplate();
+      expect(doc.iconSize, 'medium');
+      final resized = doc.copyWith(iconSize: 'large');
+      expect(resized.iconSize, 'large');
+      expect(ProcedureDocument.fromJson(resized.toJson()).iconSize, 'large');
+    });
+
+    test('fromJson clamps a missing or unknown iconSize to the default', () {
+      expect(ProcedureDocument.fromJson(const {}).iconSize, 'medium');
+      expect(
+        ProcedureDocument.fromJson(const {'iconSize': 'gigantic'}).iconSize,
+        'medium',
+      );
+    });
+
     test('fromJson tolerates a non-map input (no throw)', () {
       final doc = ProcedureDocument.fromJson('garbage');
       expect(doc.title, '');

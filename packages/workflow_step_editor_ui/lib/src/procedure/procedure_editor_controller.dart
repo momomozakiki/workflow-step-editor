@@ -38,6 +38,10 @@ class ProcedureEditorController extends ChangeNotifier {
 
   void setFooter(String footer) => _update(_document.copyWith(footer: footer));
 
+  /// Set the document-wide step-icon size (one of `ProcedureDocument.iconSizes`).
+  void setIconSize(String size) =>
+      _update(_document.copyWith(iconSize: size));
+
   // ── Steps ──────────────────────────────────────────────────────────────
   /// Append a blank step assigned to [party] (defaults to the first palette
   /// entry, or [Party.buyer] if the palette is empty).

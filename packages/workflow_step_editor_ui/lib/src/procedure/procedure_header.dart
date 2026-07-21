@@ -49,7 +49,26 @@ class ProcedureHeader extends StatelessWidget {
               const SizedBox(width: 12),
               Wrap(
                 spacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
+                  Tooltip(
+                    message: 'Icon size',
+                    child: SegmentedButton<String>(
+                      showSelectedIcon: false,
+                      segments: const [
+                        ButtonSegment(value: 'small', label: Text('S')),
+                        ButtonSegment(value: 'medium', label: Text('M')),
+                        ButtonSegment(value: 'large', label: Text('L')),
+                      ],
+                      selected: {doc.iconSize},
+                      onSelectionChanged: (s) =>
+                          controller.setIconSize(s.first),
+                      style: const ButtonStyle(
+                        visualDensity: VisualDensity.compact,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                  ),
                   FilledButton.icon(
                     onPressed: () => controller.addStep(),
                     icon: const Icon(Icons.add, size: 18),

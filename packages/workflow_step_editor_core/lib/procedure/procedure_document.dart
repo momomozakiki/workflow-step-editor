@@ -20,7 +20,15 @@ final class ProcedureDocument {
     required this.parties,
     required this.notes,
     required this.footer,
+    this.iconSize = defaultIconSize,
   });
+
+  /// Icon-size key applied to every step's icon; the UI/PDF map it to pixels.
+  /// Kept a plain string (not a Flutter size) so the core stays Flutter-free.
+  static const String defaultIconSize = 'medium';
+
+  /// The allowed [iconSize] values, smallest to largest.
+  static const List<String> iconSizes = ['small', 'medium', 'large'];
 
   final String title;
   final String subtitle;
@@ -36,6 +44,9 @@ final class ProcedureDocument {
   /// Footer disclaimer line.
   final String footer;
 
+  /// One of [iconSizes]; controls the on-screen and exported step-icon size.
+  final String iconSize;
+
   ProcedureDocument copyWith({
     String? title,
     String? subtitle,
@@ -43,6 +54,7 @@ final class ProcedureDocument {
     List<Party>? parties,
     String? notes,
     String? footer,
+    String? iconSize,
   }) =>
       ProcedureDocument(
         title: title ?? this.title,
@@ -51,6 +63,7 @@ final class ProcedureDocument {
         parties: parties ?? this.parties,
         notes: notes ?? this.notes,
         footer: footer ?? this.footer,
+        iconSize: iconSize ?? this.iconSize,
       );
 
   Map<String, Object?> toJson() => {
@@ -60,6 +73,7 @@ final class ProcedureDocument {
         'parties': [for (final p in parties) p.toJson()],
         'notes': notes,
         'footer': footer,
+        'iconSize': iconSize,
       };
 
   /// Build a [ProcedureDocument] from untrusted decoded JSON. Missing or
@@ -80,8 +94,15 @@ final class ProcedureDocument {
       parties: parties.isEmpty ? Party.presets : parties,
       notes: JsonReader.asString(map['notes']),
       footer: JsonReader.asString(map['footer']),
+      iconSize: _validIconSize(
+        JsonReader.asString(map['iconSize'], fallback: defaultIconSize),
+      ),
     );
   }
+
+  /// Clamp an untrusted icon-size value to a known one, defaulting otherwise.
+  static String _validIconSize(String value) =>
+      iconSizes.contains(value) ? value : defaultIconSize;
 
   /// The sample "FOB Tank to Vessel (TTV)" procedure ported from the source
   /// HTML — used as the initial document and by "Reset".

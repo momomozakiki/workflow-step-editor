@@ -20,6 +20,13 @@ void main() {
       expect(controller.parties, hasLength(4));
     });
 
+    test('setIconSize updates the document icon size and notifies', () {
+      expect(controller.document.iconSize, 'medium');
+      controller.setIconSize('large');
+      expect(controller.document.iconSize, 'large');
+      expect(listener.calls, greaterThan(0));
+    });
+
     test('accepts an injected initial document', () {
       final c = ProcedureEditorController(
         initial: const ProcedureDocument(
