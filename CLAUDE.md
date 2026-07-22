@@ -21,6 +21,7 @@ mappings:
 - Dart class/interface design, DRY, clean code → [`dart-solid-principles`](.claude/skills/dart-solid-principles/SKILL.md)
 - Package layering & pubspec deps → [`wse-package-boundaries`](.claude/skills/wse-package-boundaries/SKILL.md)
 - Any external/untrusted input (config, files, documents) → [`wse-input-hardening`](.claude/skills/wse-input-hardening/SKILL.md)
+- Adding/changing `ChangeNotifier` state, deciding persisted vs. in-memory → [`wse-state-management`](.claude/skills/wse-state-management/SKILL.md)
 - Multi-part / cross-domain / ambiguous work → [`wse-orchestration`](.claude/skills/wse-orchestration/SKILL.md) (the team-leader workflow)
 
 No suitable skill? If the capability is reusable, create it first with `skill-creator`; if it's

@@ -32,7 +32,7 @@ so coordination lives here in the main thread.
 | `security-reviewer` (agent) | the Security-review gate — reviews the assembled diff for input-hardening holes (read-only) | `wse-input-hardening` |
 | `code-reviewer` (agent) | the Code-review gate (5b) — reviews the assembled diff for correctness/DRY/clean-code issues (read-only) | `dart-solid-principles` |
 | `doc-writer` (agent) | general docs (README, roadmap, guides) | cites the relevant skill |
-| core / UI work (inline) | Dart core + Flutter UI edits — no dedicated agent yet; apply inline | `dart-solid-principles`, `wse-package-boundaries`, `wse-input-hardening` |
+| core / UI work (inline) | Dart core + Flutter UI edits — no dedicated agent yet; apply inline | `dart-solid-principles`, `wse-package-boundaries`, `wse-input-hardening`, `wse-state-management` |
 
 A worker that needs a rule it doesn't have should surface that back to you rather than guess — pause,
 fill the gap (see Gate 2), and resume.
