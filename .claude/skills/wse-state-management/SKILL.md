@@ -58,11 +58,11 @@ export/import — don't invent SharedPreferences-shaped scaffolding pre-emptivel
 
 ## PR litmus test
 
-- Is every new piece of controller/document state explicitly in-memory-only or part of
+- ✅ Is every new piece of controller/document state explicitly in-memory-only or part of
   `ProcedureDocument`'s JSON shape — never accidental?
-- Does new state extend `EditorController` or `ProcedureEditorController` rather than spawning a
+- ✅ Does new state extend `EditorController` or `ProcedureEditorController` rather than spawning a
   second, competing container?
-- Does the PR/commit note which state is ephemeral vs. persisted, and why?
+- ✅ Does the PR/commit note which state is ephemeral vs. persisted, and why?
 
 ## References
 
